@@ -67,7 +67,7 @@ export class TestComponent implements OnInit {
       if (abstractControl instanceof FormGroup) {
         this.logValues(abstractControl);
       } else {
-        console.log('Key: ' + key + ' Value: ' + abstractControl.value);
+        console.log('Key: ' + key + ', Value: ' + abstractControl.value);
       }
     });
   }
