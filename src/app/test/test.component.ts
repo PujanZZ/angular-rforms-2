@@ -15,6 +15,35 @@ export class TestComponent implements OnInit {
   carForm: FormGroup;
   nameLength = 0;
 
+  validationMessages = {
+    name: {
+      required: 'name is required',
+      minlength: 'Min length 2',
+      maxlength: 'Max length 10',
+    },
+    email: {
+      required: 'email is required',
+      email: 'invalid email format',
+    },
+    skillName: {
+      required: 'Skill name is required',
+    },
+    experienceInYears: {
+      required: 'Experience is required',
+    },
+    level: {
+      required: 'Select skill level',
+    },
+  };
+
+  formErrors = {
+    name: '',
+    email: '',
+    skillName: '',
+    experienceInYears: '',
+    level: '',
+  };
+
   constructor(private fb: FormBuilder) {}
 
   // ngOnInit() {
@@ -43,31 +72,29 @@ export class TestComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       skills: this.fb.group({
         skillName: ['', [Validators.required]],
-        experienceInYears: [
-          '',
-          [
-            Validators.required,
-            Validators.maxLength(3),
-            Validators.minLength(1),
-          ],
-        ],
-        level: ['Easy', [Validators.required]],
+        experienceInYears: ['', [Validators.required]],
+        level: ['', [Validators.required]],
       }),
     });
 
-    this.carForm.get('name').valueChanges.subscribe((val: string) => {
-      this.nameLength = val.length;
-    });
+    // this.carForm.get('name').valueChanges.subscribe((val: string) => {
+    //   this.nameLength = val.length;
+    // });
   }
 
-  logValues(grp: FormGroup): void {
+  logErrors(grp: FormGroup): void {
     //console.log(Object.keys(grp.controls));
     Object.keys(grp.controls).forEach((key: string) => {
       const abstractControl = grp.get(key);
       if (abstractControl instanceof FormGroup) {
-        this.logValues(abstractControl);
+        //to get nested formcontrol key, looping recursively
+        this.logErrors(abstractControl);
       } else {
-        console.log('Key: ' + key + ' Value: ' + abstractControl.value);
+        if (abstractControl && !abstractControl.valid) {
+          const msg = this.validationMessages[key];
+          // console.log(msg);
+          // console.log(abstractControl.valid);
+        }
       }
     });
   }
@@ -79,7 +106,7 @@ export class TestComponent implements OnInit {
     //console.log(this.carForm.get('skills').value.level);
   }
   onKey(): void {
-    this.logValues(this.carForm);
+    this.logErrors(this.carForm);
   }
 
   //setvalue for all values,patchvalue to update subset
